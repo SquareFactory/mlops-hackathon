@@ -11,3 +11,15 @@ conda create -n mlopshackathon python=3.9
 conda activate mlopshackathon
 pip install -r requirements.txt
 ```
+
+## Script usage
+### Train a model
+To train a model, execute the following script:
+```bash
+python training.py --max_epochs=5 --gpu=-1
+```
+### Inference
+To perform basic inference, execute the following script:
+```bash
+python inference.py --checkpoint files/weights/MNIST_classifier_mobilenetv3_rwepoch=4-val_loss=0.04.ckpt --image files/imgs_inference/MNIST_digit.png
+```
