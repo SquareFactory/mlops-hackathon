@@ -6,6 +6,7 @@ import torch
 import torch.nn as nn
 import torchmetrics
 import torchvision.transforms as T
+from sklearn.model_selection import train_test_split
 from torchvision.datasets import MNIST
 
 
@@ -135,10 +136,20 @@ class MNISTDataModule(pl.LightningDataModule):
             train_dataset, batch_size=self.hparams.batch_size
         )
 
+    def val_dataloader(self):
+        val_dataset = MNIST(
+            "./data", train=False, download=False, transform=self.transform
+        )
+        val_dataset, _ = train_test_split(val_dataset, test_size=0.5)
+        return torch.utils.data.DataLoader(
+            val_dataset, batch_size=self.hparams.batch_size
+        )
+
     def test_dataloader(self):
         test_dataset = MNIST(
             "./data", train=False, download=False, transform=self.transform
         )
+        _, test_dataset = train_test_split(test_dataset, test_size=0.5)
         return torch.utils.data.DataLoader(
             test_dataset, batch_size=self.hparams.batch_size
         )
