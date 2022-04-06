@@ -38,6 +38,7 @@ class Classifier(pl.LightningModule):
         """Argument parser for model."""
         parser = parent_parser.add_argument_group("Classifier")
         parser.add_argument("--learning_rate", type=float, default=0.0005)
+        parser.add_argument("--model_name",type=str,default="mobilenetv3_rw")
         return parent_parser
 
     def forward(self, x):
@@ -156,7 +157,7 @@ class MNISTDataModule(pl.LightningDataModule):
 
 
 if __name__ == "__main__":
-    model_name = "mobilenetv3_rw"
+
     parser = ArgumentParser()
     parser = pl.Trainer.add_argparse_args(parser)
     parser = Classifier.add_argparse_args(parser)
@@ -164,12 +165,12 @@ if __name__ == "__main__":
 
     checkpoint_callback = pl.callbacks.ModelCheckpoint(
         dirpath="lightning_logs",
-        filename=f"MNIST_classifier_{model_name}" + "{epoch}-{val_loss:.2f}",
+        filename=f"MNIST_classifier_{args.model_name}" + "{epoch}-{val_loss:.2f}",
         monitor="val_acc",
         mode="max",
     )
     dm = MNISTDataModule()
-    model = Classifier(model_name=model_name)
+    model = Classifier(learning_rate=args.learning_rate,model_name=args.model_name)
     trainer = pl.Trainer.from_argparse_args(args, callbacks=[checkpoint_callback])
     trainer.fit(model, dm)
     trainer.test(model, dm)
